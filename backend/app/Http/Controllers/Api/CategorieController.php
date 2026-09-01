@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,8 @@ class CategorieController extends Controller
             $request->validate([
                 'category' => 'required|string'
             ]);
+
+            $uuid=Str::uuid();
 
             $data = DB::table('categories')->insertGetId([
                 'category' => $request->category,

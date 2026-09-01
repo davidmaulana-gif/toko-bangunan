@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,8 @@ class UnitController extends Controller
             $request->validate([
                 'unit' => 'required|string'
             ]);
+
+            $uuid=Str::uuid();
 
             $data = DB::table('units')->insertGetId([
                 'unit' => $request->unit,

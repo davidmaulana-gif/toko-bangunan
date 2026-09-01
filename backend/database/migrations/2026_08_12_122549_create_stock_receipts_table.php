@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('stock_receipts', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->string('code')->unique();
             $table->foreignId('sales_id')
                 ->constrained('sales')

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sales_transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->string('code')->unique();
             $table->foreignId('user_id')
                 ->constrained('users')

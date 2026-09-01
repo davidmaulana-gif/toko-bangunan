@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -32,10 +33,13 @@ class Stock_receiptsController extends Controller
 
                 $code = 'RCV' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
 
+                $uuid=Str::uuid();
+
                 // Insert header
                 $stockReceiptId = DB::table('stock_receipts')
                     ->insertGetId([
                         'code' => $code,
+                        'uuid'=>$uuid,
                         'sales_id' => $request->sales_id,
                         'created_at' => now(),
                         'updated_at' => now()
@@ -55,6 +59,7 @@ class Stock_receiptsController extends Controller
 
                     DB::table('stock_receipt_details')
                         ->insert([
+                            'uuid'=> $uuid,
                             'stock_receipt_id' => $stockReceiptId,
                             'product_id' => $product->id,
                             'quantity' => $item['quantity'],
@@ -72,7 +77,7 @@ class Stock_receiptsController extends Controller
                     ->where('id', $stockReceiptId)
                     ->first();
 
-                // dd($stockReceipt);  
+                // dd($stockReceipt);
             });
 
             return response()->json([

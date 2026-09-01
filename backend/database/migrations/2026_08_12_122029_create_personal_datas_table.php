@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('personal_datas', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->string('name');
             $table->string('address');
             $table->string('picture');

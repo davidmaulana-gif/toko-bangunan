@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,6 +36,8 @@ class PersonalDataController extends Controller
                 : 1;
 
             $nip = $createdAt->format('Y') . str_pad($sequence, 6, '0', STR_PAD_LEFT);
+
+            $uuid=Str::uuid();
 
             $insert = DB::table('personal_datas')->insertGetId([
                 'name' => $request->name,
@@ -78,6 +81,8 @@ class PersonalDataController extends Controller
     {
         try {
             $userId = Auth::id();
+
+
 
             $data = DB::table('personal_datas')
                 ->select(

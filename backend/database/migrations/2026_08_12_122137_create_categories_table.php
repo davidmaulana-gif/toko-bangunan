@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->string('category');
             $table->softDeletes();
             $table->timestamps();

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('return_details', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->foreignId('return_id')
                 ->constrained('returns')
                 ->onDelete('cascade');

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategorieController;
 use App\Http\Controllers\Api\PersonalDataController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\Sales_transactionsController;
 use App\Http\Controllers\Api\SalesController;
@@ -60,9 +61,13 @@ Route::patch('/unit/delete/{id}', [UnitController::class, 'deleteUnit']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 
-    Route::prefix('sales_transactions')->controller(Sales_transactionsController::class)->group(function(){
-    Route::post('/create', 'createSalesTransaction');
-});
+    Route::prefix('sales_transactions')->controller(Sales_transactionsController::class)->group(function () {
+        Route::post('/create', 'createSalesTransaction');
+    });
+
+    Route::prefix('return')->controller(ReturnController::class)->group(function () {
+        Route::post('/create', 'createReturn');
+    });
 
     Route::post('/role/create', [RoleController::class, 'createRole']);
     Route::get('/role/get', [RoleController::class, 'getRole']);

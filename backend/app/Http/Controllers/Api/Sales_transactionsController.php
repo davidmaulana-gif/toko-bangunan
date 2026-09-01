@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,8 @@ class Sales_transactionsController extends Controller
                     : 1;
 
                 $code = 'TRX' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+
+                $uuid = Str::uuid();
 
                 $total = 0;
                 $details = [];
@@ -68,6 +71,7 @@ class Sales_transactionsController extends Controller
 
                 $transactionId = DB::table('sales_transactions')
                     ->insertGetId([
+                        'uuid' => $uuid,
                         'code' => $code,
                         'user_id' => Auth::id(),
                         'total' => $total,
@@ -80,6 +84,7 @@ class Sales_transactionsController extends Controller
 
                     DB::table('sales_transaction_details')
                         ->insert([
+                            'uuid' => $uuid,
                             'sales_transaction_id' => $transactionId,
                             'product_id' => $detail['product_id'],
                             'quantity' => $detail['quantity'],
@@ -104,7 +109,6 @@ class Sales_transactionsController extends Controller
                 'message' => 'Transaksi berhasil ditambahkan.',
                 'data' => $transaction
             ], 201);
-
         } catch (\Exception $error) {
 
             return response()->json([

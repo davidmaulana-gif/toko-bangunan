@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -16,8 +16,11 @@ class RoleController extends Controller
                 'role' => 'required|string|unique:roles,role'
             ]);
 
+            $uuid=Str::uuid();
+
             $role = DB::table('roles')->insertGetId([
                 'role' => $request->role,
+                'uuid'=> $uuid,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);

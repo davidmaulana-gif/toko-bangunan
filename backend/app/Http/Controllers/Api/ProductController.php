@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,10 @@ class ProductController extends Controller
 
             $code = 'BRG' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
 
+            $uuid=Str::uuid();
+
             $data = DB::table('products')->insertGetId([
+                'uuid'=>$uuid,
                 'code' => $code,
                 'name' => $request->name,
                 'max_stock' => $request->max_stock,
@@ -47,6 +51,7 @@ class ProductController extends Controller
             return response()->json([
                 'message' => 'data berhasil ditambahkan.',
                 'data' => [
+                    'uuid'=>$uuid,
                     'code' => $code,
                     'name' => $request->name,
                     'max_stock' => $request->max_stock,

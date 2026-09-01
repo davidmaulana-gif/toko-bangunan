@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,8 @@ class SupplierController extends Controller
                 'phone_number' => 'required|string|unique:suppliers,phone_number',
                 'email' => 'required|email|unique:suppliers,email'
             ]);
+
+            $uuid=Str::uuid();
 
             $data = DB::table('suppliers')->insertGetId([
                 'name' => $request->name,

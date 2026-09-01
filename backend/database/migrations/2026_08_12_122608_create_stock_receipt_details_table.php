@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('stock_receipt_details', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->foreignId('stock_receipt_id')
                 ->constrained('stock_receipts')
                 ->onDelete('cascade');

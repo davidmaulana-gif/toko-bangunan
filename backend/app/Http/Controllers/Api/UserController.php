@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 // use Egulias\EmailValidator\Result\Reason\RFCWarnings;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,10 @@ class UserController extends Controller
                 'password' => 'required|string'
             ]);
 
+            $uuid=Str::uuid();
+
             $user = DB::table('users')->insertGetId([
+                'uuid'=> $uuid,
                 'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),

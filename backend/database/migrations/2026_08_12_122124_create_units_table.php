@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique();
             $table->string('unit');
             $table->softDeletes();
             $table->timestamps();

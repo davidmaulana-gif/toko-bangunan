@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -20,6 +21,8 @@ class SalesController extends Controller
             ]);
 
             $picture = $request->file('picture')->store('/sales', 'public');
+
+            $uuid=Str::uuid();
 
             $insert = DB::table('sales')->insertGetId([
                 'name' => $request->name,
