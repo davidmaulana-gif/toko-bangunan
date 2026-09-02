@@ -48,9 +48,6 @@ Route::get('/sales/search', [SalesController::class, 'searchSales']);
 Route::post('/sales/edit/{id}', [SalesController::class, 'editSales']);
 Route::patch('/sales/delete/{id}', [SalesController::class, 'deleteSales']);
 
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/register', [UserController::class, 'register']);
-Route::patch('/delete/{id}', [UserController::class, 'delete']);
 
 Route::post('/unit/create', [UnitController::class, 'createUnit']);
 Route::get('/unit/get', [UnitController::class, 'getUnit']);
@@ -58,7 +55,10 @@ Route::get('/unit/search', [UnitController::class, 'searchUnit']);
 Route::post('/unit/edit/{id}', [UnitController::class, 'editUnit']);
 Route::patch('/unit/delete/{id}', [UnitController::class, 'deleteUnit']);
 
+Route::post('/login', [UserController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/register', [UserController::class, 'register']);
+    Route::patch('/delete/{uuid}', [UserController::class, 'delete']);
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::prefix('sales_transactions')->controller(Sales_transactionsController::class)->group(function () {

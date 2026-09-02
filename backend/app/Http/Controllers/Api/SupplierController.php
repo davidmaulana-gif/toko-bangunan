@@ -20,9 +20,10 @@ class SupplierController extends Controller
                 'email' => 'required|email|unique:suppliers,email'
             ]);
 
-            $uuid=Str::uuid();
+            $uuid = Str::uuid();
 
             $data = DB::table('suppliers')->insertGetId([
+                'uuid' => $uuid,
                 'name' => $request->name,
                 'nib' => $request->nib,
                 'address' => $request->address,
@@ -135,7 +136,7 @@ class SupplierController extends Controller
 
             $updateData['updated_at'] = now();
 
-            $insert=DB::table('suppliers')
+            $insert = DB::table('suppliers')
                 ->select(
                     'name',
                     'address',
@@ -194,5 +195,4 @@ class SupplierController extends Controller
             ], 500);
         }
     }
-
 }

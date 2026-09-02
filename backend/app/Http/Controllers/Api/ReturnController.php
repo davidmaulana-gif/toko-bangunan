@@ -72,8 +72,10 @@ class ReturnController extends Controller
                 // 4. Simpan detail return + update stok
                 foreach ($details as $detail) {
 
+                $uuidDetail=Str::uuid();
+
                     DB::table('return_details')->insert([
-                        'uuid'=>$uuid,
+                        'uuid'=>$uuidDetail,
                         'return_id' => $returnId,
                         'product_id' => $detail['product_id'],
                         'quantity' => $detail['quantity'],
@@ -84,6 +86,8 @@ class ReturnController extends Controller
                         'updated_at' => now(),
                     ]);
 
+                    $uuidDamage=Str::uuid();
+
                     if ($detail['condition'] === 'layak') {
 
                         DB::table('products')
@@ -92,6 +96,7 @@ class ReturnController extends Controller
                     } else {
 
                         DB::table('damaged_products')->insert([
+                            'uuid'=> $uuidDamage,
                             'product_id' => $detail['product_id'],
                             'user_id' => Auth::id(),
                             'quantity' => $detail['quantity'],

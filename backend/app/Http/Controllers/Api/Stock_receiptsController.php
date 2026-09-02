@@ -33,13 +33,13 @@ class Stock_receiptsController extends Controller
 
                 $code = 'RCV' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
 
-                $uuid=Str::uuid();
+                $uuidStock=Str::uuid();
 
                 // Insert header
                 $stockReceiptId = DB::table('stock_receipts')
                     ->insertGetId([
                         'code' => $code,
-                        'uuid'=>$uuid,
+                        'uuid'=>$uuidStock,
                         'sales_id' => $request->sales_id,
                         'created_at' => now(),
                         'updated_at' => now()
@@ -57,9 +57,11 @@ class Stock_receiptsController extends Controller
                         throw new \Exception('Produk tidak ditemukan.');
                     }
 
+                    $uuidDetial=Str::uuid();
+
                     DB::table('stock_receipt_details')
                         ->insert([
-                            'uuid'=> $uuid,
+                            'uuid'=> $uuidDetial,
                             'stock_receipt_id' => $stockReceiptId,
                             'product_id' => $product->id,
                             'quantity' => $item['quantity'],

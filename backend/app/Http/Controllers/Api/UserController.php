@@ -9,9 +9,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -24,10 +23,10 @@ class UserController extends Controller
                 'password' => 'required|string'
             ]);
 
-            $uuid=Str::uuid();
+            $uuid = Str::uuid();
 
             $user = DB::table('users')->insertGetId([
-                'uuid'=> $uuid,
+                'uuid' => $uuid,
                 'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
@@ -167,11 +166,11 @@ class UserController extends Controller
         }
     }
 
-    public function delete($id)
+    public function delete($uuid)
     {
         try {
             $user = DB::table('users')
-                ->where('id', $id)
+                ->where('uuid', $uuid)
                 ->whereNull('deleted_at')
                 ->update([
                     'deleted_at' => now(),
@@ -180,17 +179,24 @@ class UserController extends Controller
 
             if (!$user) {
                 return response()->json([
-                    'message' => 'data gagal di hapus'
+                    'message' => 'data gagal di hapus 1'
                 ], 500);
             }
 
+            $id = DB::table('users')
+                ->where('uuid', $uuid)
+                ->value('id');
+
+
             $personalData = DB::table('personal_datas')
-                ->where('user_id', $id)
+                ->where('user_id',  $id)
                 ->whereNull('deleted_at')
                 ->update([
                     'deleted_at' => now(),
                     'updated_at' => now()
                 ]);
+
+            dd($personalData);
 
             if (!$personalData) {
                 return response()->json([

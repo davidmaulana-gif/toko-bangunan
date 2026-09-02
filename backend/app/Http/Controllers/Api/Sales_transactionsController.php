@@ -82,9 +82,11 @@ class Sales_transactionsController extends Controller
 
                 foreach ($details as $detail) {
 
+                $uuidDetail=Str::uuid();
+
                     DB::table('sales_transaction_details')
                         ->insert([
-                            'uuid' => $uuid,
+                            'uuid' => $uuidDetail,
                             'sales_transaction_id' => $transactionId,
                             'product_id' => $detail['product_id'],
                             'quantity' => $detail['quantity'],

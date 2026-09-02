@@ -16,7 +16,7 @@ class SalesController extends Controller
                 'name' => 'required|string',
                 'nik' => 'required|string|unique:sales,nik',
                 'phone_number' => 'required|string|unique:sales,phone_number',
-                'email' => 'required|string|unique:sales,email',
+                'email' => 'required|stri   ng|unique:sales,email',
                 'picture' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             ]);
 
@@ -25,6 +25,7 @@ class SalesController extends Controller
             $uuid=Str::uuid();
 
             $insert = DB::table('sales')->insertGetId([
+                'uuid'=>$uuid,
                 'name' => $request->name,
                 'nik' => $request->nik,
                 'phone_number' => $request->phone_number,
