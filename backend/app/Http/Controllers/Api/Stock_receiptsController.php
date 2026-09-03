@@ -14,86 +14,76 @@ class Stock_receiptsController extends Controller
         try {
             $request->validate([
                 'sales_id' => 'required|integer|exists:sales,id',
-                'products' => 'required|array|min:1',
-                'products.*.product_id' => 'required|integer|exists:products,id',
-                'products.*.quantity' => 'required|integer|min:1',
-                'products.*.buying_price' => 'required|integer|min:0',
+                'products' => 'required|array',
+                'products.*.product_id' => 'required|integer|exists:product_id,id',
+                'products.*.quantity' => 'required|integer',
+                'products.*.buying_price=>' => 'required|integer'
             ]);
 
             DB::transaction(function () use ($request, &$stockReceipt) {
 
-                // Generate code RCV001
-                $lastCode = DB::table('stock_receipts')
+                $uuid = Str::uuid();
+
+                $lastcode = DB::table('stock_receipts')
                     ->orderByDesc('code')
                     ->value('code');
 
-                $sequence = $lastCode
-                    ? ((int) substr($lastCode, 3)) + 1
+                $sequence = $lastcode
+                    ? ((int)substr($lastcode, 3)) + 1
                     : 1;
 
-                $code = 'RCV' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+                $code = 'RCV' . str_pad($sequence, 3, '0');
 
-                $uuidStock=Str::uuid();
+                $header = DB::table('stock_receipts')->insertGetId([
+                    'uuid' => $uuid,
+                    'code' => $code,
+                    'sales_id' => $request->sales_id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
 
-                // Insert header
-                $stockReceiptId = DB::table('stock_receipts')
-                    ->insertGetId([
-                        'code' => $code,
-                        'uuid'=>$uuidStock,
-                        'sales_id' => $request->sales_id,
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
+                foreach ($request->products as $barang) {
 
-                // Insert detail + tambah stok
-                foreach ($request->products as $item) {
+                    $uuidDetail = Str::uuid();
 
                     $product = DB::table('products')
-                        ->where('id', $item['product_id'])
+                        ->where('id', $barang['product_id'])
                         ->whereNull('deleted_at')
                         ->first();
 
                     if (!$product) {
-                        throw new \Exception('Produk tidak ditemukan.');
+                        throw new \Exception('product tidak di temukan.');
                     }
 
-                    $uuidDetial=Str::uuid();
-
-                    DB::table('stock_receipt_details')
-                        ->insert([
-                            'uuid'=> $uuidDetial,
-                            'stock_receipt_id' => $stockReceiptId,
-                            'product_id' => $product->id,
-                            'quantity' => $item['quantity'],
-                            'buying_price' => $item['buying_price'],
-                            'created_at' => now(),
-                            'updated_at' => now()
-                        ]);
+                    DB::table('stock_receipt_details')->insert([
+                        'uuid' => $uuidDetail,
+                        'stock_receipt_id' => $header,
+                        'product_id' => $product->id,
+                        'quantity' => $barang['quantity'],
+                        'buying_price' => $barang['buying_price'],
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
 
                     DB::table('products')
                         ->where('id', $product->id)
-                        ->increment('total_unit', $item['quantity']);
+                        ->increment('total_unit', $barang['quantity']);
+
+                    $stockReceipt = DB::table('stock_receipts')
+                        ->where('id', $header)
+                        ->first();
                 }
 
-                $stockReceipt = DB::table('stock_receipts')
-                    ->where('id', $stockReceiptId)
-                    ->first();
-
-                // dd($stockReceipt);
+                return response()->json([
+                    'message' => 'barang berhasil diterima.',
+                    'data' => $stockReceipt
+                ]);
             });
-
+        } catch (\Exception $errorStock) {
             return response()->json([
-                'status' => true,
-                'message' => 'Barang berhasil diterima.',
-                'data' => $stockReceipt
-            ], 201);
-        } catch (\Exception $error) {
-
-            return response()->json([
-                'status' => false,
-                'message' => 'Barang gagal diterima.',
-                'error' => $error->getMessage()
-            ], 500);
+                'message' => 'data gagal di tambahkan.',
+                'error' => $errorStock->getMessage()
+            ]);
         }
     }
 }
