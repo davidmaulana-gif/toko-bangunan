@@ -146,7 +146,7 @@ class ProductController extends Controller
         }
     }
 
-    public function editSellingPrice(Request $request, $id)
+    public function editSellingPrice(Request $request, $uuid)
     {
         try {
             $request->validate([
@@ -154,7 +154,7 @@ class ProductController extends Controller
             ]);
 
             $data = DB::table('products')
-                ->where('id', $id)
+                ->where('uuid', $uuid)
                 ->first();
 
             if (!$data) {
@@ -165,7 +165,7 @@ class ProductController extends Controller
 
             $edit = DB::table('products')
                 ->select('selling_price')
-                ->where('id', $id)
+                ->where('uuid', $uuid)
                 ->update([
                     'selling_price' => $request->selling_price,
                     'updated_at' => now(),
@@ -175,7 +175,7 @@ class ProductController extends Controller
             return response()->json([
                 'message' => 'data selling price berhasil di tambahkan.',
                 'data' => [
-                    'id' => $id,
+                    'uuid' => $uuid,
                     'selling_price' => $request->selling_price
                 ]
             ],200);

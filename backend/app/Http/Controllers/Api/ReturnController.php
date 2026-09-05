@@ -36,11 +36,11 @@ class ReturnController extends Controller
 
                 foreach ($request->products as $item) {
 
-
                     $transactionDetail = DB::table('sales_transaction_details')
                         ->where('sales_transaction_id', $code)
                         ->where('product_id', $item['product_id'])
                         ->first();
+
 
                     if (!$transactionDetail) {
                         throw new Exception('Barang tidak ada pada transaksi ini.');
@@ -67,17 +67,18 @@ class ReturnController extends Controller
                 // 3. Simpan header return
                 $returnId = DB::table('returns')->insertGetId([
                     'uuid' => $uuid,
-                    'sales_transaction_id' => $request->sales_transaction_id,
+                    'sales_transaction_id' => $code,
                     'user_id' => Auth::id(),
                     'total_return' => $totalReturn,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
 
-                $uuidDetail = Str::uuid();
 
                 // 4. Simpan detail return + update stok
                 foreach ($details as $detail) {
+
+                    $uuidDetail = Str::uuid();
 
                     DB::table('return_details')->insert([
                         'uuid' => $uuidDetail,

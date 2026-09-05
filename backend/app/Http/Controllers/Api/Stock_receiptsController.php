@@ -15,9 +15,9 @@ class Stock_receiptsController extends Controller
             $request->validate([
                 'sales_id' => 'required|integer|exists:sales,id',
                 'products' => 'required|array',
-                'products.*.product_id' => 'required|integer|exists:product_id,id',
+                'products.*.product_id' => 'required|integer|exists:products,id',
                 'products.*.quantity' => 'required|integer',
-                'products.*.buying_price=>' => 'required|integer'
+                'products.*.buying_price' => 'required|integer'
             ]);
 
             DB::transaction(function () use ($request, &$stockReceipt) {
@@ -73,12 +73,12 @@ class Stock_receiptsController extends Controller
                         ->where('id', $header)
                         ->first();
                 }
-
-                return response()->json([
-                    'message' => 'barang berhasil diterima.',
-                    'data' => $stockReceipt
-                ]);
             });
+
+            return response()->json([
+                'message' => 'barang berhasil diterima.',
+                'data' => $stockReceipt
+            ]);
         } catch (\Exception $errorStock) {
             return response()->json([
                 'message' => 'data gagal di tambahkan.',
