@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CategorieController;
+use App\Http\Controllers\Api\FinancialReportController;
 use App\Http\Controllers\Api\PersonalDataController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReturnController;
@@ -80,4 +81,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/personal-data/edit', [PersonalDataController::class, 'editPersonalData']);
     Route::get('/personal-data/search', [PersonalDataController::class, 'searchPersonalData']);
     Route::post('/personal-data/delete', [PersonalDataController::class, 'deletePersonalData']);
+
+    Route::get('/financialReport/create', [FinancialReportController::class, 'financialReport']);
 });
