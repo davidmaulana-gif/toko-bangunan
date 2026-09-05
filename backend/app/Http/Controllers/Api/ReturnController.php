@@ -17,7 +17,7 @@ class ReturnController extends Controller
 
             // 1. Validasi request
             $request->validate([
-                'sales_transaction_id' => 'required|integer|exists:sales_transactions,id',
+                'code' => 'required|string|exists:sales_transactions,code',
                 'products' => 'required|array|min:1',
                 'products.*.product_id' => 'required|integer|exists:products,id',
                 'products.*.quantity' => 'required|integer|min:1',
@@ -30,11 +30,15 @@ class ReturnController extends Controller
                 $details = [];
                 $uuid = Str::uuid();
 
+                $code = DB::table('sales_transactions')
+                    ->where('code', $request->code)
+                    ->value('id');
 
                 foreach ($request->products as $item) {
 
+
                     $transactionDetail = DB::table('sales_transaction_details')
-                        ->where('sales_transaction_id', $request->sales_transaction_id)
+                        ->where('sales_transaction_id', $code)
                         ->where('product_id', $item['product_id'])
                         ->first();
 
@@ -57,6 +61,7 @@ class ReturnController extends Controller
                         'condition' => $item['condition'],
                         'subtotal' => $subtotal,
                     ];
+                    // dd($details);
                 }
 
                 // 3. Simpan header return
@@ -69,13 +74,13 @@ class ReturnController extends Controller
                     'updated_at' => now(),
                 ]);
 
+                $uuidDetail = Str::uuid();
+
                 // 4. Simpan detail return + update stok
                 foreach ($details as $detail) {
 
-                $uuidDetail=Str::uuid();
-
                     DB::table('return_details')->insert([
-                        'uuid'=>$uuidDetail,
+                        'uuid' => $uuidDetail,
                         'return_id' => $returnId,
                         'product_id' => $detail['product_id'],
                         'quantity' => $detail['quantity'],
@@ -86,7 +91,7 @@ class ReturnController extends Controller
                         'updated_at' => now(),
                     ]);
 
-                    $uuidDamage=Str::uuid();
+                    $uuidDamage = Str::uuid();
 
                     if ($detail['condition'] === 'layak') {
 
@@ -96,7 +101,7 @@ class ReturnController extends Controller
                     } else {
 
                         DB::table('damaged_products')->insert([
-                            'uuid'=> $uuidDamage,
+                            'uuid' => $uuidDamage,
                             'product_id' => $detail['product_id'],
                             'user_id' => Auth::id(),
                             'quantity' => $detail['quantity'],

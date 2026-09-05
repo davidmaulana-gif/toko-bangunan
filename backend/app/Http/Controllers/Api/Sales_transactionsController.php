@@ -13,7 +13,6 @@ class Sales_transactionsController extends Controller
     public function createSalesTransaction(Request $request)
     {
         try {
-
             $request->validate([
                 'payment' => 'required|integer|min:0',
                 'products' => 'required|array|min:1',
